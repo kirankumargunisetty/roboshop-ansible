@@ -1,6 +1,7 @@
 - name: roboshop instance management
   hosts: local
   connection: local
+  # for connecting to AWS ansible run the python code in background so we need to execute this command pip3.9 install boto3 botocore
   vars:
     instances: ["mongodb","redis","mysql","rabbitmq"]
     image_id: ami-0220d79f3f480ecf5
@@ -17,6 +18,11 @@
     loop: "{{ instances }}"  
     register: ec2_output
 
-  - name: print output
+  # - name: print output
+  #   debug:
+  #     msg: "{{ ec2_output }}"
+
+  - name: create route 53 record
     debug:
-      msg: "{{ ec2_output }}"
+      msg: "Instance name: {{ item.item }} PrivateIp: {{ item.instances[0].private_ip_address }}"
+    loop: "{{ ec2_output.results }}"
