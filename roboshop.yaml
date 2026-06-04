@@ -5,6 +5,7 @@
   vars:
     instances: ["mongodb","redis","mysql","rabbitmq"]
     image_id: ami-0220d79f3f480ecf5
+    domain_name: devopskiran.online
   tasks:
   - name: create ec2 instances
     amazon.aws.ec2_instance:
@@ -35,6 +36,7 @@
       type: A
       tt1: 1
       value: "{{ item.instances[0].private_ip_address }}"
+      overwrite: true
     loop: "{{ ec2_output.results }}"
     #when: item.item != "frontend"
 
@@ -46,6 +48,7 @@
       type: A
       tt1: 1
       value: "{{ item.instances[0].public_ip_address }}"
+      overwrite: true # this will overwrite the existing r53 records if present with same name
     loop: "{{ ec2_output.results }}"
     when: item.item != "frontend"
  
