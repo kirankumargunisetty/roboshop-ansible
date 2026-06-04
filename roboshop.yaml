@@ -3,7 +3,7 @@
   connection: local
   # for connecting to AWS ansible run the python code in background so we need to execute this command pip3.9 install boto3 botocore
   vars:
-    instances: ["mongodb","redis","mysql","rabbitmq"]
+    instances: ["mongodb","redis","mysql","rabbitmq","frontend"]
     image_id: ami-0220d79f3f480ecf5
     domain_name: devopskiran.online
     action: create
@@ -66,7 +66,7 @@
       type: A
       ttl: 1
     loop: "{{ instances }}"  
-    when action == "delete"
+    when: action == "delete"
 
   - name: delete r53 records for frontend
     amazon.aws.route53:
