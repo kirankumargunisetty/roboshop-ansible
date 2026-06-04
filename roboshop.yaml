@@ -14,7 +14,7 @@
       security_groups: 
       - "roboshop-{{ item }}"
       - roboshop-common
-    loop: "{{ instance}}"  
+    loop: "{{ instances }}"  
     register: ec2_output
 
   - name: print output
