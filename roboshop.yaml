@@ -3,10 +3,10 @@
   connection: local
   # for connecting to AWS ansible run the python code in background so we need to execute this command pip3.9 install boto3 botocore
   vars:
-    instances: ["mongodb","redis","mysql","rabbitmq","frontend"]
+    instances: ["mongodb","redis","mysql","rabbitmq","frontend","cart"]
     image_id: ami-0220d79f3f480ecf5
     domain_name: devopskiran.online
-    act: create
+    action: create
   tasks:
   - name: create ec2 instances
     amazon.aws.ec2_instance:
@@ -20,7 +20,7 @@
     loop: "{{ instances }}"  
     register: ec2_output
     #when: action == "create"
-    when: act == "delete"
+    when: action == "delete"
 
   # - name: print output
   #   debug:
@@ -41,7 +41,7 @@
       value: "{{ item.instances[0].private_ip_address }}"
       overwrite: true
     loop: "{{ ec2_output.results }}"
-    when: act == "create"
+    when: action == "create"
     #when: item.item != "frontend"
 
   - name: create route 53 record for frondend
@@ -56,7 +56,7 @@
     loop: "{{ ec2_output.results }}"
     when: 
     - item.item != "frontend"
-    - act == "create"
+    - action == "create"
  
   - name: delete r53 records
     amazon.aws.route53:
@@ -66,7 +66,7 @@
       type: A
       ttl: 1
     loop: "{{ instances }}"  
-    when: act == "delete"
+    when: action == "delete"
 
   - name: delete r53 records for frontend
     amazon.aws.route53:
@@ -77,5 +77,5 @@
       ttl: 1
     loop: "{{ instances }}"  
     when:
-    - act == "delete"
+    - action == "delete"
     - item == "frontend"
